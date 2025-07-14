@@ -1,10 +1,20 @@
 import React, { useState } from "react";
+import FeedBackList from "./FeedBackList";
 
 function FeedBackForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [feedBacks, setFeedBacks] = useState([
+    {
+      id: 1,
+      name: "Uzair",
+      email: "uzair@example.com",
+      message: "Great app!",
+      rating: 5,
+    },
+  ]);
 
   const [errors, setErrors] = useState({
     name: "",
@@ -47,6 +57,11 @@ function FeedBackForm() {
     setTimeout(() => {
       setSuccess(false);
     }, 3000);
+  };
+
+  const handleDelete = (id) => {
+    const updatedList = feedBacks.filter((item) => item.id !== id);
+    setFeedBacks(updatedList);
   };
 
   return (
@@ -96,6 +111,7 @@ function FeedBackForm() {
           <button type="submit">Submit</button>
         </div>
       </form>
+      <FeedBackList feedbackList={feedBacks} handleDelete={handleDelete} />
     </div>
   );
 }
