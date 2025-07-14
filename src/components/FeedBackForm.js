@@ -49,6 +49,15 @@ function FeedBackForm() {
     console.log("Email:", email);
     console.log("Message:", message);
 
+    const newFeedback = {
+      id: feedBacks.length + 1,
+      name,
+      email,
+      message,
+      rating: 5,
+    };
+    setFeedBacks([...feedBacks, newFeedback]);
+
     setName("");
     setEmail("");
     setMessage("");
