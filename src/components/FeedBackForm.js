@@ -6,6 +6,7 @@ function FeedBackForm() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [feedBacks, setFeedBacks] = useState([
     {
       id: 1,
@@ -44,33 +45,43 @@ function FeedBackForm() {
     setErrors(formErrors);
     if (!isValid) return;
 
-    console.log("Form submitted with the following data:");
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Message:", message);
-
     const newFeedback = {
-      id: feedBacks.length + 1,
+      id: editingId || Date.now(), // Use existing ID if editing
       name,
       email,
       message,
       rating: 5,
     };
-    setFeedBacks([...feedBacks, newFeedback]);
+
+    if (editingId) {
+      // Edit mode: Update existing item
+      const updatedList = feedBacks.map((item) =>
+        item.id === editingId ? newFeedback : item
+      );
+      setFeedBacks(updatedList);
+      setEditingId(null); // reset edit mode
+    } else {
+      // Add mode: Add new feedback
+      setFeedBacks([...feedBacks, newFeedback]);
+    }
 
     setName("");
     setEmail("");
     setMessage("");
-
     setSuccess(true);
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3000);
+    setTimeout(() => setSuccess(false), 3000);
   };
 
   const handleDelete = (id) => {
     const updatedList = feedBacks.filter((item) => item.id !== id);
     setFeedBacks(updatedList);
+  };
+
+  const handleEdit = (item) => {
+    setName(item.name);
+    setEmail(item.email);
+    setMessage(item.message);
+    setEditingId(item.id); // ← new state we’ll make
   };
 
   return (
@@ -117,10 +128,14 @@ function FeedBackForm() {
           <p style={{ color: "green" }}>Thank you for your feedback!</p>
         )}
         <div>
-          <button type="submit">Submit</button>
+          <button type="submit">{editingId ? "Update" : "Submit"}</button>
         </div>
       </form>
-      <FeedBackList feedbackList={feedBacks} handleDelete={handleDelete} />
+      <FeedBackList
+        feedbackList={feedBacks}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+      />
     </div>
   );
 }
